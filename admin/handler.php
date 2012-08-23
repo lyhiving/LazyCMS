@@ -6,8 +6,12 @@
  */
 
 abstract class Handler {
+    // user info
+    protected $USER;
     // 页面标题
     protected $title = '';
+    // 装饰器
+    protected $wrap  = true;
 
     /**
      * Javascript
@@ -30,16 +34,32 @@ abstract class Handler {
             APP_ROOT.'/res/bootstrap.css',
         );
     }
-    protected function header() {
-        $href_styles = $this->get_styles();
-        $text_styles = ob_get_content('style');
-        include APP_PATH.'/header.php';
+    /**
+     * get方法前置事件
+     *
+     * @return void
+     */
+    public function get_prev() {
+        ob_start();
     }
 
-    protected function footer() {
-        $href_scripts = $this->get_scripts();
-        $text_scripts = ob_get_content('script');
-        include APP_PATH.'/footer.php';
+    /**
+     * get方法后置事件
+     *
+     * @return void
+     */
+    public function get_next() {
+        $the_body = ob_block_end('body');
+        if ($this->wrap) {
+            $href_styles  = $this->get_styles();
+            $href_scripts = $this->get_scripts();
+            $text_styles  = ob_get_content('style');
+            include APP_PATH.'/header.php';
+            echo $the_body;
+            $text_scripts = ob_get_content('script');
+            include APP_PATH.'/footer.php';
+        } else {
+            echo $the_body;
+        }
     }
-
 }

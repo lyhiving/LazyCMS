@@ -177,7 +177,8 @@ function ob_get_content($tag, $join = "\r\n") {
     global $upf_ob_contents;
     if (isset($upf_ob_contents[$tag])) {
         array_multisort($upf_ob_contents[$tag]['order'], SORT_DESC, $upf_ob_contents[$tag]['content']);
-        return implode($join, $upf_ob_contents[$tag]['content']);
+        $content = implode($join, $upf_ob_contents[$tag]['content']);
+        return preg_replace('/^\s*/m', '', $content);
     }
     return null;
 }
