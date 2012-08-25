@@ -6,8 +6,8 @@
  */
 // include global
 include dirname(__FILE__) . '/global.php';
-
-class IndexHandler extends Handler {
+// define class
+class indexHandler extends Handler{
     function __before() {
         $this->title = __('控制面板');
     }
@@ -21,9 +21,8 @@ class IndexHandler extends Handler {
         return $state ? '<strong style="color:#009900;">&radic;</strong>' : '<strong style="color:#FF0000;">&times;</strong>';
     }
     function get() {
-
+        var_dump('ddd');
     }
 }
-
 // app run
-App::instance()->run('IndexHandler');
+App::instance()->run();

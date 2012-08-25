@@ -6,8 +6,10 @@
  */
 // include global
 include dirname(__FILE__) . '/global.php';
-
-class ProxyHandler {
+// app run
+App::instance()->run('proxyHandler');
+// define class
+class proxyHandler {
     function get() {
         $callback = isset($_GET['c']) ? $_GET['c'] : null;
         $result   = isset($_GET['r']) ? json_decode($_GET['r']) : null;
@@ -20,5 +22,3 @@ class ProxyHandler {
         echo '</script>';
     }
 }
-// app run
-App::instance()->run('ProxyHandler');

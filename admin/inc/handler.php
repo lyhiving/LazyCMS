@@ -39,7 +39,7 @@ abstract class Handler {
      *
      * @return void
      */
-    public function get_prev() {
+    final public function get_prev() {
         ob_start();
     }
 
@@ -48,7 +48,7 @@ abstract class Handler {
      *
      * @return void
      */
-    public function get_next() {
+    final public function get_next() {
         $the_body = ob_block_end('body');
         if ($this->wrap) {
             $href_styles  = $this->get_styles();
@@ -62,4 +62,8 @@ abstract class Handler {
             echo $the_body;
         }
     }
+
+
 }
+
+

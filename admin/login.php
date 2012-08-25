@@ -6,8 +6,10 @@
  */
 // include global
 include dirname(__FILE__) . '/global.php';
-
-class LoginHandler {
+// app run
+App::instance()->run();
+// define class
+class loginHandler {
     function get() {
         $app_base = app_base();
         ?>
@@ -77,7 +79,6 @@ class LoginHandler {
 	#login .col2 .remember input{ margin-right:3px; }
 	#login .col2 .remember label{ display: inline-block; }
     #login .col2 .submit{ width: 75px; text-align: right; margin-right:19px; float:right; _margin-right:10px; _height:25px; }
-    #login .col2 .submit button{ width: 70px; }
     .alert{ width: 350px; }
 </style>
 </head>
@@ -101,5 +102,3 @@ class LoginHandler {
         <?php
     }
 }
-// app run
-App::instance()->run('LoginHandler');

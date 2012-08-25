@@ -529,7 +529,8 @@ final class App {
         if ($this->rewrite || $this->qfield) {
             $handler = 'HTTP404';
             // rewrite uri
-            $match_uri = substr($this->uri, strlen(APP_ROOT)-1);
+            $match_uri = $this->rewrite ? substr($this->uri, strlen(APP_ROOT) - 1) : $this->uri;
+
             // route matches
             if ($route_pairs && is_array($route_pairs)) {
                 $this->route_pairs = array_merge($this->route_pairs, $route_pairs);

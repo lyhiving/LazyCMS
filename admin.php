@@ -63,7 +63,7 @@ class RunHandler {
                 echo $this->result($result);
             }
         } else {
-            redirect($this->base_url.'/login.php?s='.base64_encode($this->app_base));
+            redirect($this->base_url.'/index.php?q=login&s='.base64_encode($this->app_base));
         }
     }
 
@@ -85,7 +85,7 @@ class RunHandler {
         // 解决iframe跨域不能执行脚本
         else {
             $html.= '</head><body>';
-            $html.= '<iframe src="' . $this->base_url . '/proxy.php?c=' . $this->callback . '&r=' . rawurlencode($data) . '"></iframe>';
+            $html.= '<iframe src="' . $this->base_url . '/index.php?q=proxy&c=' . $this->callback . '&r=' . rawurlencode($data) . '"></iframe>';
         }
         $html.= '</body></html>';
         return $html;
