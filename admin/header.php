@@ -16,8 +16,8 @@ if ($text_styles) e($text_styles);
 html,body { height:100%; }
 /* Wrapper
 ------------------------------------------------------------------------------*/
-#wrapper { height: auto; min-height: 100%; position: relative; }
-    #wrapper .placeholder{ width: 100%; height: 40px; clear: both; }
+#wrapper { height: auto; min-height: 100%; }
+    #wrapper .wrapper{ width: 100%; padding-top: 40px; padding-bottom: 41px; }
 /* Footer
 ------------------------------------------------------------------------------*/
 .footer { width:100%; height:30px; overflow: hidden; display:block; padding:5px 0; background:#F5F5F5; border-top:1px solid #E5E5E5; clear:both; position:relative; margin-top:-41px; }
@@ -58,4 +58,4 @@ html,body { height:100%; }
     </div>
 </div>
 <div id="wrapper" class="container-fluid">
-    <div class="placeholder">&nbsp;</div>
+    <div class="wrapper">
