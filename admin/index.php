@@ -21,7 +21,29 @@ class indexHandler extends Handler{
         return $state ? '<strong style="color:#009900;">&radic;</strong>' : '<strong style="color:#FF0000;">&times;</strong>';
     }
     function get() {
-        var_dump('ddd');
+        ?>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+        <p>dddd</p>
+
+
+        <?php
     }
 }
 // app run

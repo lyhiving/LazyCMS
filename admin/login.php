@@ -64,21 +64,21 @@ class loginHandler {
     });
 </script>
 <style type="text/css">
-    #login { width: 545px; height: 300px; margin: 10% auto 0 auto; background: url(res/bg-line.gif) no-repeat 220px top; text-align:left; }
-    #login .col1 { width:260px; padding-top:100px; margin:50px auto; float:left; background:url(res/login-logo.png) no-repeat left top; }
+    #login { width: 590px; height: 300px; margin: 10% auto 0 auto; background: url(res/bg-line.gif) no-repeat 260px top; text-align:left; }
+    #login .col1 { width:300px; padding-top:100px; margin:50px auto; float:left; background:url(res/login-logo.png) no-repeat left top; }
     #login .col1 p { color:#999999; margin:8px 0; padding:0; }
     #login .col2 { width:230px; margin:25px 0 0 35px; padding:15px 0px 15px 20px; float:left; }
-    #login .col2 dt { font-weight:bold; color:#666666; font-size:14px; }
+    #login .col2 dt { font-weight:bold; color:#666666; font-size:16px; }
     #login .col2 dd { margin:10px 0 5px 0; padding:0; }
     #login .col2 select { width:205px; }
     #login .col2 label{ line-height:2; margin-left:1px; }
-    #login .col2 input{ margin-bottom: 0; }
+    #login .col2 input{ margin-bottom: 0; margin-top: 0; }
     #login .col2 .username,
     #login .col2 .password{ width:200px; margin-left:1px; }
     #login .col2 .remember{ margin-top:15px; float:left; }
 	#login .col2 .remember input{ margin-right:3px; }
 	#login .col2 .remember label{ display: inline-block; }
-    #login .col2 .submit{ width: 75px; text-align: right; margin-right:19px; float:right; _margin-right:10px; _height:25px; }
+    #login .col2 .submit{ float:left; margin-left: 8px; }
     .alert{ width: 350px; }
 </style>
 </head>
