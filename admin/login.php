@@ -78,7 +78,7 @@ class loginHandler {
     #login .col2 .remember{ margin-top:15px; float:left; }
 	#login .col2 .remember input{ margin-right:3px; }
 	#login .col2 .remember label{ display: inline-block; }
-    #login .col2 .submit{ float:left; margin-left: 8px; }
+    #login .col2 .submit{ float:left; margin-left: 25px; }
     .alert{ width: 350px; }
 </style>
 </head>
@@ -94,7 +94,7 @@ class loginHandler {
         <dd><label for="username"><?php _e('用户名');?></label><div class="control-group"><input class="username" type="text" name="username" id="username" tabindex="1" /></div></dd>
         <dd><label for="password"><?php _e('密码');?></label><div class="control-group"><input class="password" type="password" name="password" id="password" tabindex="2" /></div></dd>
         <dd class="remember"><input name="remember" type="checkbox" id="remember" value="forever" tabindex="3" /><label for="remember"><?php _e('记住我的登录信息');?></label></dd>
-        <dd class="submit"><button type="submit" class="btn" tabindex="4"><i class="icon-circle-arrow-right"></i> <?php _e('登录');?></button></dd>
+        <dd class="submit"><button type="submit" class="btn" tabindex="4"><?php _e('登录');?></button></dd>
     </dl>
 </form>
 </body>
