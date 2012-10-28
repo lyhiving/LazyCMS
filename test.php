@@ -6,11 +6,14 @@
  */
 // include global
 include dirname(__FILE__) . '/global.php';
+
 // define class
-class indexHandler extends Handler{
+class testHandler extends Handler{
     function get() {
+        var_dump(__CLASS__);
         $r = get_config('app_autoload');
         print_r($r);
+
     }
 }
 // app run

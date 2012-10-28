@@ -104,7 +104,7 @@ function get_config($name=null, $file='common') {
          */
         $default = array(
             // allow domain
-            'crossdomain' => '*.'.$_SERVER['HTTP_HOST'],
+            'crossdomain' => IS_CLI ? '*' : '*.' . $_SERVER['HTTP_HOST'],
             // 输出日志允许的IP
             'logger_allowIPs' => '127.0.0.1',
             // app common autoload
@@ -121,7 +121,7 @@ function get_config($name=null, $file='common') {
         $config  = load_config($file);
         $config  = array_merge_recursive_distinct($default, $config);
         // 加载最外层的配置，优先级最高
-        if ($static = load_config('static')) {
+        if ($static = load_config($file, '__super__')) {
             $config = array_merge_recursive_distinct($config, $static);
         }
         if (!$config) {
@@ -204,11 +204,12 @@ function ob_block_end($tag, $order = 0) {
  * 加载配置
  *
  * @param string $file
+ * @param string $super
  * @return array
  */
-function load_config($file) {
+function load_config($file, $super=null) {
     $config = array();
-    $path = apply_filters('load_config', $file);
+    $path = apply_filters('load_config', $file, $super);
     if ($path == $file) {
         $path = APP_PATH . '/conf/' . $file . '.php';
     }
@@ -346,6 +347,8 @@ function apply_filters($tag, $value) {
         return $value;
     }
 
+    ksort($upf_filter[$tag]);
+
     reset($upf_filter[$tag]);
 
     $args = func_get_args();
@@ -389,54 +392,56 @@ final class App {
         // run mode
         if (IS_CLI) {
             ob_implicit_flush(1);
+            // set uri
+            $this->uri = PHP_FILE;
         } else {
             ob_start();
+            // uri
+            $uri = $_SERVER['REQUEST_URI'] == '/' ? PHP_FILE : $_SERVER['REQUEST_URI'];
+            if (($pos=strpos($uri, '?')) !== false) $uri = substr($uri, 0, $pos);
+            $this->rewrite = $uri != PHP_FILE && !file_exists(dirname(UPF_PATH).$uri);
+            $this->qfield  = isset($_GET[UPF_QFIELD]);
+            if ($this->rewrite || $this->qfield) {
+                $field = UPF_QFIELD;
+                // Apache 404
+                if (isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] == 404) {
+                    header('HTTP/1.1 200 OK', true, 200);
+                    $uri = $_SERVER['REQUEST_URI'];
+                }
+                // IIS 404
+                elseif (isset($_SERVER['QUERY_STRING']) && strncmp($_SERVER['QUERY_STRING'], '404;', 4) === 0) {
+                    header('HTTP/1.1 200 OK', true, 200);
+                    $_SERVER['URL'] = $_SERVER['REQUEST_URI'] = substr($_SERVER['QUERY_STRING'], strlen('404;'.HTTP_SCHEME.'://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']));
+                    $_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], strpos($_SERVER['QUERY_STRING'], '?') + 1);
+                    $uri = $_SERVER['REQUEST_URI'];
+                }
+                // QUERY_STRING
+                elseif ($field && isset($_GET[$field]) && empty($_SERVER['PATH_INFO'])) {
+                    $uri = isset($_GET[$field]) ? $_GET[$field] : '';
+                    unset($_GET[$field], $_REQUEST[$field]);
+                    $uri = strncmp($uri, '/', 1) === 0 ? $uri : '/' . $uri;
+                }
+                // PATH_INFO
+                elseif (strpos($_SERVER['REQUEST_URI'], PHP_FILE) === 0) {
+                    $uri = substr($_SERVER['REQUEST_URI'], strlen(PHP_FILE));
+                    $uri = strncmp($uri, '/', 1) === 0 ? $uri : '/' . $uri;
+                }
+                // other
+                else {
+                    $uri = $_SERVER['REQUEST_URI'];
+                }
+                // handle query
+                if (($pos=strpos($uri, '?')) !== false) {
+                    $query = substr($uri, $pos+1);
+                    $uri   = substr($uri, 0, $pos);
+                    parse_str($query, $_GET);
+                    $_REQUEST = array_merge($_REQUEST, $_GET);
+                }
+                if (empty($uri)) $uri = '/';
+            }
+            // set uri
+            $this->uri = $uri;
         }
-        // uri
-        $uri = $_SERVER['REQUEST_URI'] == '/' ? PHP_FILE : $_SERVER['REQUEST_URI'];
-        if (($pos=strpos($uri, '?')) !== false) $uri = substr($uri, 0, $pos);
-        $this->rewrite = $uri != PHP_FILE && !file_exists(dirname(UPF_PATH).$uri);
-        $this->qfield  = isset($_GET[UPF_QFIELD]);
-        if ($this->rewrite || $this->qfield) {
-            $field = UPF_QFIELD;
-            // Apache 404
-            if (isset($_SERVER['REDIRECT_STATUS']) && $_SERVER['REDIRECT_STATUS'] == 404) {
-                header('HTTP/1.1 200 OK', true, 200);
-                $uri = $_SERVER['REQUEST_URI'];
-            }
-            // IIS 404
-            elseif (isset($_SERVER['QUERY_STRING']) && strncmp($_SERVER['QUERY_STRING'], '404;', 4) === 0) {
-                header('HTTP/1.1 200 OK', true, 200);
-                $_SERVER['URL'] = $_SERVER['REQUEST_URI'] = substr($_SERVER['QUERY_STRING'], strlen('404;'.HTTP_SCHEME.'://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']));
-                $_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], strpos($_SERVER['QUERY_STRING'], '?') + 1);
-                $uri = $_SERVER['REQUEST_URI'];
-            }
-            // QUERY_STRING
-            elseif ($field && isset($_GET[$field]) && empty($_SERVER['PATH_INFO'])) {
-                $uri = isset($_GET[$field]) ? $_GET[$field] : '';
-                unset($_GET[$field], $_REQUEST[$field]);
-                $uri = strncmp($uri, '/', 1) === 0 ? $uri : '/' . $uri;
-            }
-            // PATH_INFO
-            elseif (strpos($_SERVER['REQUEST_URI'], PHP_FILE) === 0) {
-                $uri = substr($_SERVER['REQUEST_URI'], strlen(PHP_FILE));
-                $uri = strncmp($uri, '/', 1) === 0 ? $uri : '/' . $uri;
-            }
-            // other
-            else {
-                $uri = $_SERVER['REQUEST_URI'];
-            }
-            // handle query
-            if (($pos=strpos($uri, '?')) !== false) {
-                $query = substr($uri, $pos+1);
-                $uri   = substr($uri, 0, $pos);
-                parse_str($query, $_GET);
-                $_REQUEST = array_merge($_REQUEST, $_GET);
-            }
-            if (empty($uri)) $uri = '/';
-        }
-        // set uri
-        $this->uri = $uri;
     }
 
     // App instance
@@ -525,8 +530,8 @@ final class App {
         } else {
             $handler = $route_pairs;
         }
-
-        if ($this->rewrite || $this->qfield) {
+        // 非CLI模式
+        if (!IS_CLI && ($this->rewrite || $this->qfield)) {
             $handler = 'HTTP404';
             // rewrite uri
             $match_uri = $this->rewrite ? substr($this->uri, strlen(APP_ROOT) - 1) : $this->uri;
@@ -1037,6 +1042,24 @@ function is_serialized($data) {
  */
 function is_happened($probability){
     return (mt_rand(1, 100000) / 100000) <= $probability;
+}
+
+/**
+ * 判断是否汉字
+ *
+ * @param string $str
+ * @return int
+ */
+function is_hanzi($str){
+    return preg_match('%^(?:
+          [\xC2-\xDF][\x80-\xBF]            # non-overlong 2-byte
+        | \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
+        | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2} # straight 3-byte
+        | \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
+        | \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
+        | [\xF1-\xF3][\x80-\xBF]{3}         # planes 4-15
+        | \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
+        )*$%xs',$str);
 }
 /**
  * 全概率计算

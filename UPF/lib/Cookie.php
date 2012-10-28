@@ -1,6 +1,10 @@
 <?php
 // 定义域名
-defined('COOKIE_DOMAIN') or define('COOKIE_DOMAIN', '');
+if (!defined('COOKIE_DOMAIN')) {
+    $host = $_SERVER['HTTP_HOST'];
+    define('COOKIE_DOMAIN', strncasecmp($host, 'www.', 4) === 0 ? substr($host, 4) : $host);
+    unset($host);
+}
 /**
  * Cookie 管理类
  *
@@ -17,6 +21,7 @@ class Cookie {
     public static function is_set($name) {
         return isset($_COOKIE[$name]);
     }
+
     /**
      * 获取某个cookie值
      *
@@ -26,6 +31,7 @@ class Cookie {
     public static function get($name) {
         return isset($_COOKIE[$name]) ? $_COOKIE[$name] : null;
     }
+
     /**
      * 设置某个cookie值
      *
@@ -35,11 +41,12 @@ class Cookie {
      * @param string $path
      * @param string $domain
      */
-    public static function set($name,$value,$expire=0,$path='/',$domain='') {
+    public static function set($name, $value, $expire = 0, $path = '/', $domain = '') {
         if (empty($domain)) $domain = COOKIE_DOMAIN;
         if ($expire) $expire = time() + $expire;
-        setcookie($name,$value,$expire,$path,$domain); 
+        setcookie($name, $value, $expire, $path, $domain);
     }
+
     /**
      * 删除某个cookie值
      *
@@ -47,8 +54,8 @@ class Cookie {
      * @param string $path
      * @param string $domain
      */
-    public static function delete($name,$path='/',$domain='') {
-        if(empty($domain)) $domain = COOKIE_DOMAIN;
-        self::set($name,'',time()-3600,$path,$domain);
+    public static function delete($name, $path = '/', $domain = '') {
+        if (empty($domain)) $domain = COOKIE_DOMAIN;
+        self::set($name, '', time() - 3600, $path, $domain);
     }
 }

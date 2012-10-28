@@ -12,8 +12,11 @@ $config['admin_baseurl'] = 'http://admin.lukin.cn/admin';
 // app autoload
 $config['app_autoload'] = array(
     '^(Doing|User)$' => APP_PATH . '/lib/$1.php',
+    '^(.+?)Handler$' => APP_PATH . '/$1.php',
 );
 // app route
 $config['app_routes'] = array(
-
+    'indexHandler' => '^/$',
+    'testHandler' => '^/test$',
 );
+
